@@ -1,45 +1,42 @@
-const words = [
-    "ქალი",
-    "პარლამენტი",
-    "თბილისი",
-    "მეგობრობა",
-    "ზრდა",
-    "ქარვა",
-    "სანი"
+// Full Georgian alphabet
+const letters = [
+    "ა", "ბ", "გ", "დ", "ე", "ვ", "ზ", "თ", "ი", "კ",
+    "ლ", "მ", "ნ", "ო", "პ", "ჟ", "რ", "ს", "ტ", "უ",
+    "ფ", "ქ", "ღ", "ყ", "შ", "ჩ", "ც", "ძ", "წ", "ჭ",
+    "ხ", "ჯ", "ჰ"
 ];
 
-// Shuffle function (Fisher–Yates)
-function shuffleWord(word) {
-    let arr = word.split("");
-    for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-    return arr.join("");
+let currentLetter = "";
+
+function newLetter() {
+    const index = Math.floor(Math.random() * letters.length);
+    currentLetter = letters[index];
+    const box = document.getElementById("letter-box");
+
+    box.textContent = currentLetter;
+    box.classList.remove("wrong");
+    box.classList.remove("correct");
+    document.getElementById("status").textContent = "";
 }
 
-let currentWord = "";
-let scrambled = "";
+// Key listener
+document.addEventListener("keydown", (event) => {
+    let pressed = event.key;
 
-function newGame() {
-    document.getElementById("result").textContent = "";
-    const randomIndex = Math.floor(Math.random() * words.length);
-    currentWord = words[randomIndex];
-    scrambled = shuffleWord(currentWord);
-    document.getElementById("scrambledWord").textContent = scrambled;
-    document.getElementById("userInput").value = "";
-}
+    // If user presses Shift, Ctrl, etc — ignore
+    if (pressed.length !== 1) return;
 
-document.getElementById("checkBtn").addEventListener("click", () => {
-    const guess = document.getElementById("userInput").value.trim();
-    if (guess === currentWord) {
-        document.getElementById("result").textContent = "✔ სწორი!";
+    const box = document.getElementById("letter-box");
+
+    if (pressed === currentLetter) {
+        box.classList.add("correct");
+        document.getElementById("status").textContent = "✔ სწორია";
+        setTimeout(newLetter, 300);
     } else {
-        document.getElementById("result").textContent = "✘ არასწორი, ისევ სცადე";
+        box.classList.add("wrong");
+        document.getElementById("status").textContent = "✘ არასწორია";
     }
 });
 
-document.getElementById("nextBtn").addEventListener("click", newGame);
-
-// start game
-newGame();
+// Start the game
+newLetter();
